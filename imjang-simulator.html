@@ -840,21 +840,21 @@ function renderSetup(){
 
     <div class="row">
       <div class="field"><label for="f-name">이름</label>
-        <input id="f-name" type="text" value="장훈" maxlength="10"></div>
+        <input id="f-name" type="text" placeholder="예: 장훈" maxlength="10"></div>
       <div class="field"><label for="f-age">나이</label>
-        <input id="f-age" type="number" value="36" min="22" max="65"></div>
+        <input id="f-age" type="number" placeholder="예: 36" min="22" max="65"></div>
     </div>
 
     <div class="row">
       <div class="field"><label for="f-income">세전 연소득 <span class="note">만원</span></label>
-        <input id="f-income" type="number" value="7500" step="100" min="1500"></div>
+        <input id="f-income" type="number" placeholder="예: 7500" step="100" min="1500"></div>
       <div class="field"><label for="f-cash">보유 현금 <span class="note">만원 · 전세보증금 포함</span></label>
-        <input id="f-cash" type="number" value="30000" step="1000" min="0"></div>
+        <input id="f-cash" type="number" placeholder="예: 30000" step="1000" min="0"></div>
     </div>
 
     <div class="row">
       <div class="field"><label for="f-debt">기존 대출 연간 상환액 <span class="note">만원 · 없으면 0</span></label>
-        <input id="f-debt" type="number" value="0" step="100" min="0"></div>
+        <input id="f-debt" type="number" placeholder="예: 0" step="100" min="0"></div>
       <div class="field"><label for="f-office">직장</label>
         <select id="f-office">${OFFICES.map(o=>`<option${o.n==="강남역"?" selected":""}>${o.n}</option>`).join("")}</select></div>
     </div>
@@ -956,7 +956,7 @@ function renderSetup(){
       name: document.getElementById("f-name").value.trim()||"나",
       age: +document.getElementById("f-age").value||36,
       income: Math.max(1500,+document.getElementById("f-income").value||7500),
-      cash: Math.max(0,+document.getElementById("f-cash").value||0),
+      cash: Math.max(0,+document.getElementById("f-cash").value||30000),
       debtAnnual: Math.max(0,+document.getElementById("f-debt").value||0),
       office: document.getElementById("f-office").value,
       house: sel("f-house"), firstHome: sel("f-first")==="1",

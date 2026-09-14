@@ -840,7 +840,7 @@ function renderSetup(){
 
     <div class="row">
       <div class="field"><label for="f-name">이름</label>
-        <input id="f-name" type="text" placeholder="예: 장훈" maxlength="10"></div>
+        <input id="f-name" type="text" placeholder="예: 김종국" maxlength="10"></div>
       <div class="field"><label for="f-age">나이</label>
         <input id="f-age" type="number" placeholder="예: 36" min="22" max="65"></div>
     </div>
@@ -893,15 +893,15 @@ function renderSetup(){
       <div id="f-region">
         <p class="hint" style="margin:0 0 6px">서울</p>
         <div class="chips" style="margin:0 0 10px">
-          ${REGIONS.filter(r=>r.z==="서울").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="true">${r.n}</button>`).join("")}
+          ${REGIONS.filter(r=>r.z==="서울").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
         </div>
         <p class="hint" style="margin:0 0 6px">경기</p>
         <div class="chips" style="margin:0 0 10px">
-          ${REGIONS.filter(r=>r.z==="경기").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="true">${r.n}</button>`).join("")}
+          ${REGIONS.filter(r=>r.z==="경기").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
         </div>
         <p class="hint" style="margin:0 0 6px">인천</p>
         <div class="chips">
-          ${REGIONS.filter(r=>r.z==="인천").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="true">${r.n}</button>`).join("")}
+          ${REGIONS.filter(r=>r.z==="인천").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
         </div>
       </div>
       <p class="hint" id="f-region-warn" style="display:none;color:var(--red);margin:8px 0 0">지역을 1개 이상 골라주세요.</p>

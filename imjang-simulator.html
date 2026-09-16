@@ -70,6 +70,7 @@ input[type=text],input[type=number],select{
   background:#fff;border:1.5px solid var(--ink);border-radius:0;color:var(--ink);
 }
 input[type=range]{width:100%;accent-color:var(--red)}
+input[type=file]{width:100%;font:inherit;font-size:13px;padding:8px;border:1.5px dashed var(--ink);background:#fff}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row > *{flex:1 1 150px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
@@ -208,6 +209,7 @@ footer{color:#8FAEA2;font-size:11.5px;text-align:center;margin-top:28px;line-hei
     <p class="tagline">캐릭터의 소득과 현금을 정하면, 정해진 기간 동안 매물을 보러 다니며 집을 고릅니다. 호가는 오르고 매물은 팔리고 규제는 바뀝니다.</p>
   </header>
   <main id="app"></main>
+  <script id="listings-data" type="application/json">null</script>
   <footer>
     시세·대출 규제는 수도권 기준을 단순화한 게임용 수치입니다. 실제 거래 판단에 쓰지 마세요.
   </footer>
@@ -355,7 +357,86 @@ function priceOf(r,size,age,floor,tot,flags){
   return Math.round(p/100)*100;
 }
 
-// 선호도 가중 추첨으로 후보 하나를 만든다. 예산 안에 드는지는 makeListing이 최종 확인한다.
+/* ---- 실거래 기반 매물 풀 ---- */
+let POOL = null;
+
+// listings.json(§4.3 스키마)을 로드해 dongMeta → 지역, complexes.sizes → 매물 후보로 정규화한다.
+function loadPool(doc){
+  if(!doc || !doc.complexes || !doc.complexes.length) throw new Error("complexes 가 비어 있습니다");
+  const zone = (doc.meta && doc.meta.zone) || "서울";
+  const gu   = (doc.meta && doc.meta.gu) || "";
+  const prem = (doc.meta && doc.meta.askPremium) || 1.05;
+  const regions = {};
+  Object.entries(doc.dongMeta || {}).forEach(([dong,m])=>{
+    regions[dong] = {n:(gu?gu+" ":"")+dong, z:zone, p:0, x:m.x, y:m.y, t:m.t,
+                     edu:m.edu, inf:m.inf, env:m.env, fut:m.fut};
+  });
+  const items = [];
+  doc.complexes.forEach(c=>{
+    const r = regions[c.dong]; if(!r) return;
+    (c.sizes||[]).forEach(s=>{
+      if(!s.median || !s.py) return;
+      items.push({c, s, r, ask: Math.round(s.median*prem/100)*100});
+    });
+  });
+  if(!items.length) throw new Error("사용 가능한 평형이 없습니다 (dongMeta 와 법정동이 맞는지 확인)");
+  Object.values(regions).forEach(r=>{
+    const mine = items.filter(i=>i.r===r);
+    r.p = mine.length ? Math.round(mine.reduce((a,i)=>a+i.ask/i.s.py,0)/mine.length) : 3000;
+  });
+  POOL = {meta:doc.meta||{}, regions, items, prem};
+  return POOL;
+}
+
+// 매물이 뽑히는 지역 전체 집합. 실거래 풀을 불러왔으면 그 dongMeta, 아니면 절차적 REGIONS.
+function regionUniverse(){
+  return POOL ? Object.values(POOL.regions) : REGIONS;
+}
+
+// 플레이어가 SETUP에서 고른 지역만 대상으로 한다. 선택이 비어 있으면(이론상 발생 안 함) 전체를 쓴다.
+function activeRegions(){
+  const universe = regionUniverse();
+  const list = universe.filter(r=>S.regions && S.regions.includes(r.n));
+  return list.length ? list : universe;
+}
+
+// 선호도 가중 추첨으로 실거래 풀에서 후보 하나를 뽑는다. 예산 확인은 makeListing이 한다.
+function buildPoolCandidate(weighted){
+  const it = pick(weighted), c = it.c, s = it.s, r = it.r;
+  const age   = Math.max(0, new Date().getFullYear() - (c.buildYear || new Date().getFullYear()));
+  const floor = (s.floors && s.floors.length) ? pick(s.floors) : ri(3,15);
+  const tot   = c.totalFloors || Math.max(floor + ri(0,6), 12);
+  const units = c.units || ri(200,1800);
+  const wsub = (typeof c.subwayWalkMin === "number") ? c.subwayWalkMin : null;
+  const ppu  = (typeof c.parkingPerUnit === "number") ? c.parkingPerUnit : null;
+  const flags = {
+    station: wsub!==null ? wsub<=10 : Math.random()<0.55,
+    big: units>=800 || (S.prio.includes("big") && Math.random()<0.3),
+    school: Math.random()<0.40,
+    noise: Math.random()<0.22, hill: Math.random()<0.25, south: Math.random()<0.60,
+    leak: age>15 && Math.random()<0.25, renov: age>10 && Math.random()<0.35,
+    recon: age>=29 && Math.random()<0.50, tenant: Math.random()<0.30,
+    parking: (ppu!==null ? ppu : (age<=12 ? rnd(1.2,1.8) : rnd(0.5,1.1))) + (S.prio.includes("parking") ? rnd(0.1,0.3) : 0),
+    sun: Math.random()<0.25
+  };
+  const ff = floor<=2 ? 0.92 : floor===tot ? 0.96 : floor/tot>0.55 ? 1.04 : 1.00;
+  const price = Math.round(it.ask * ff * S.marketIdx * rnd(0.97,1.03)/100)*100;
+
+  return {
+    id:"L"+(S.seq++), r, age, floor, tot, flags, price, basePrice:price,
+    size:{py:Math.round(s.py), m2:Math.round(s.m2), mul:1,
+          rooms: s.py>=30?"방4":s.py>=22?"방3":"방2"},
+    heat: clamp(regionFit(r)/28*0.6 + (age<=7?0.25:0) + (flags.station?0.12:0)
+          + rnd(-0.1,0.15) + (S.marketMood-1)*1.2, 0.05, 0.95),
+    name: c.apt, stationMin: wsub!==null ? wsub : (flags.station?ri(3,9):ri(11,20)),
+    stationName: c.subwayStation || null, heatName: c.heatName || null,
+    totalFloorsEst: !!c.totalFloorsEstimated,
+    units, commute: commuteMin(r), seenWeek: S.week,
+    real: {n:s.n, median:s.median, lastYm:s.lastYm||"", kapt: !!c.kaptCode}
+  };
+}
+
+// 선호도 가중 추첨으로 후보 하나를 만든다 (절차적 생성). 예산 안에 드는지는 makeListing이 최종 확인한다.
 function buildListingCandidate(weighted){
   const r = pick(weighted);
 
@@ -396,23 +477,26 @@ function buildListingCandidate(weighted){
   };
 }
 
-// 플레이어가 SETUP에서 고른 지역만 대상으로 한다. 선택이 비어 있으면(이론상 발생 안 함) 전체를 쓴다.
-function activeRegions(){
-  const list = REGIONS.filter(r=>S.regions && S.regions.includes(r.n));
-  return list.length ? list : REGIONS;
-}
-
 // 연소득·보유 현금으로 받을 수 있는 대출을 따져, 그 범위 안에서 실제로 살 수 있는 매물만 내보낸다.
+// POOL이 있으면 실거래 후보에서, 없으면 절차적으로 후보를 만들고 — 어느 쪽이든 예산 재시도는 동일하다.
 function makeListing(){
-  const weighted=[];
-  activeRegions().forEach(r=>{
-    const n = Math.max(1, Math.round(regionFit(r)));
-    for(let i=0;i<n;i++) weighted.push(r);
-  });
+  const active = activeRegions();
+  let build;
+  if(POOL){
+    let items = POOL.items.filter(i=>active.includes(i.r));
+    if(!items.length) items = POOL.items;
+    const weighted=[];
+    items.forEach(i=>{ const n=Math.max(1,Math.round(regionFit(i.r))); for(let k=0;k<n;k++) weighted.push(i); });
+    build = ()=>buildPoolCandidate(weighted);
+  } else {
+    const weighted=[];
+    active.forEach(r=>{ const n=Math.max(1,Math.round(regionFit(r))); for(let k=0;k<n;k++) weighted.push(r); });
+    build = ()=>buildListingCandidate(weighted);
+  }
 
-  let candidate = buildListingCandidate(weighted);
+  let candidate = build();
   for(let i=0; i<29 && !canAfford(candidate.price, candidate.r.z, candidate.size.py); i++){
-    candidate = buildListingCandidate(weighted);
+    candidate = build();
   }
   if(!canAfford(candidate.price, candidate.r.z, candidate.size.py)){
     // 극단적 저예산이라 30번 시도해도 못 맞추면, 그 조합에서 낼 수 있는 최대가로 맞춘다
@@ -425,8 +509,11 @@ function makeListing(){
 /* ---- 임장 리포트 ---- */
 function report(L){
   const good=[], bad=[];
-  if(L.flags.station) good.push(`${L.r.n} 역까지 걸어서 ${L.stationMin}분. 지하철 접근은 확실합니다.`);
-  else bad.push(`역까지 도보 ${L.stationMin}분. 마을버스를 타게 될 겁니다.`);
+  const st = L.stationName ? L.stationName : "가장 가까운 역";
+  if(L.flags.station) good.push(`${st}까지 걸어서 ${L.stationMin}분. 지하철 접근은 확실합니다.`);
+  else bad.push(`${st}까지 도보 ${L.stationMin}분. 마을버스를 타게 될 겁니다.`);
+  if(L.heatName && L.heatName.includes("중앙")) bad.push("중앙난방 단지입니다. 난방을 마음대로 켜고 끌 수 없습니다.");
+  else if(L.heatName && L.heatName.includes("지역")) good.push("지역난방이라 겨울 난방비가 예측 가능합니다.");
   if(L.commute<=30) good.push(`${S.office}까지 편도 ${L.commute}분. 출퇴근이 거의 스트레스가 아닙니다.`);
   else if(L.commute<=50) good.push(`${S.office}까지 편도 ${L.commute}분. 무난한 수준입니다.`);
   else bad.push(`${S.office}까지 편도 ${L.commute}분. 왕복 ${Math.round(L.commute*2/60*10)/10}시간을 길에서 씁니다.`);
@@ -630,8 +717,8 @@ function renderIntro(){
 
   const office = OFFICES.find(o=>o.n===S.office);
   const stops = pickIntroStops(7);
-  const xs = REGIONS.map(r=>r.x).concat(OFFICES.map(o=>o.x));
-  const ys = REGIONS.map(r=>r.y).concat(OFFICES.map(o=>o.y));
+  const xs = regionUniverse().map(r=>r.x).concat(OFFICES.map(o=>o.x));
+  const ys = regionUniverse().map(r=>r.y).concat(OFFICES.map(o=>o.y));
   const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
   const W=320, H=220, PAD=22;
   const sx = x => (PAD + (x-minX)/(maxX-minX)*(W-2*PAD)).toFixed(1);
@@ -834,6 +921,11 @@ function render(){
 
 function renderSetup(){
   app.innerHTML = `
+  <div class="paper tight">
+    <h2>매물 데이터</h2>
+    <p class="hint" id="pool-status" style="margin:0 0 10px"></p>
+    <input type="file" id="f-pool" accept="application/json,.json">
+  </div>
   <div class="paper">
     <h2>캐릭터 설정</h2>
     <p class="hint">여기서 정한 숫자가 볼 수 있는 매물의 범위를 결정합니다.</p>
@@ -891,18 +983,14 @@ function renderSetup(){
         <button type="button" class="chip" id="f-region-none">전체 해제</button>
       </div>
       <div id="f-region">
-        <p class="hint" style="margin:0 0 6px">서울</p>
+        ${["서울","경기","인천"].map(z=>{
+          const rs = regionUniverse().filter(r=>r.z===z);
+          if(!rs.length) return "";
+          return `<p class="hint" style="margin:0 0 6px">${z}</p>
         <div class="chips" style="margin:0 0 10px">
-          ${REGIONS.filter(r=>r.z==="서울").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
-        </div>
-        <p class="hint" style="margin:0 0 6px">경기</p>
-        <div class="chips" style="margin:0 0 10px">
-          ${REGIONS.filter(r=>r.z==="경기").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
-        </div>
-        <p class="hint" style="margin:0 0 6px">인천</p>
-        <div class="chips">
-          ${REGIONS.filter(r=>r.z==="인천").map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
-        </div>
+          ${rs.map(r=>`<button type="button" class="chip" data-v="${r.n}" aria-pressed="false">${r.n}</button>`).join("")}
+        </div>`;
+        }).join("")}
       </div>
       <p class="hint" id="f-region-warn" style="display:none;color:var(--red);margin:8px 0 0">지역을 1개 이상 골라주세요.</p>
     </div>
@@ -948,6 +1036,28 @@ function renderSetup(){
   ["f-income","f-cash","f-debt","f-office"].forEach(id=>
     document.getElementById(id).addEventListener("input",preview));
   preview();
+
+  function poolStatus(){
+    const el = document.getElementById("pool-status");
+    if(!el) return;
+    el.innerHTML = POOL
+      ? `<b>${POOL.meta.gu||""} 실거래 기반</b> · 단지 ${new Set(POOL.items.map(i=>i.c.id)).size}개 / 평형 ${POOL.items.length}종 · 기준 ${POOL.meta.generatedAt||"-"}`
+        + (POOL.meta.source==="SAMPLE-SYNTHETIC" ? ` <b style="color:var(--red)">· 합성 샘플입니다</b>` : "")
+      : `지금은 가상 매물 생성 모드입니다. <b>listings.json</b>을 불러오면 실제 단지·실거래 기반으로 진행합니다.`;
+  }
+  poolStatus();
+  document.getElementById("f-pool").addEventListener("change", e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = ()=>{
+      try{
+        loadPool(JSON.parse(rd.result));
+        renderSetup(); // 지역 칩을 새 데이터 기준으로 다시 그린다
+      }
+      catch(err){ POOL=null; alert("불러오기 실패: "+err.message); poolStatus(); preview(); }
+    };
+    rd.readAsText(f);
+  });
 
   function readCfg(){
     const sel = (id)=>document.querySelector(`#${id} [aria-pressed=true]`)?.dataset.v;
@@ -1025,10 +1135,11 @@ function listingCard(L){
       <div class="price"><span class="big num">${fmt(L.price)}</span>${delta}</div>
       <div class="spec">
         <div><div class="k">전용면적</div><div class="v num">${L.size.m2}㎡ (${L.size.py}평)</div></div>
-        <div><div class="k">층</div><div class="v num">${L.floor}/${L.tot}층</div></div>
+        <div><div class="k">층</div><div class="v num">${L.floor}/${L.tot}층${L.totalFloorsEst?"*":""}</div></div>
         <div><div class="k">연식</div><div class="v num">${L.age}년</div></div>
         <div><div class="k">세대수</div><div class="v num">${L.units.toLocaleString()}</div></div>
       </div>
+      ${L.real?`<p class="hint" style="margin:10px 0 0">최근 ${L.real.n}건 실거래 중앙값 ${fmt(L.real.median)}${L.real.lastYm?` · 최종 거래 ${L.real.lastYm.slice(0,4)}년 ${+L.real.lastYm.slice(4)}월`:""}${L.real.kapt?" · K-apt 단지정보 반영":""}${L.totalFloorsEst?" · *총층은 관측 최대층 기준 추정":""}</p>`:""}
       <div class="report ${tired?"":""}">
         <h3>임장 기록${tired?" · 피곤해서 놓친 부분이 있습니다":""}</h3>
         <ul class="good">${rep.good.map(t=>`<li>${t}</li>`).join("")}</ul>
@@ -1182,5 +1293,10 @@ function renderEnd(){
   document.getElementById("a-again").addEventListener("click",()=>{S=null;renderSetup();window.scrollTo(0,0);});
 }
 
+try{
+  const raw = document.getElementById("listings-data");
+  const d = raw && JSON.parse(raw.textContent);
+  if(d) loadPool(d);
+}catch(e){ POOL = null; }
 renderSetup();
 </script>

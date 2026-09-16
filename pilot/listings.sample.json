@@ -1,0 +1,781 @@
+{
+ "meta": {
+  "source": "SAMPLE-SYNTHETIC",
+  "lawdCd": "11350",
+  "gu": "노원구",
+  "zone": "서울",
+  "months": 12,
+  "minDeals": 3,
+  "askPremium": 1.05,
+  "generatedAt": "2026-03-01",
+  "note": "구조 확인용 합성 샘플입니다. 가격은 실제 실거래가가 아닙니다. collect_listings.py 로 진짜 데이터를 받으세요.",
+  "kaptEnrichedAt": "2026-03-01",
+  "kaptMatched": 10
+ },
+ "dongMeta": {
+  "상계동": {
+   "x": 5,
+   "y": 10,
+   "t": 1.12,
+   "edu": 3,
+   "inf": 3,
+   "env": 4,
+   "fut": 3
+  },
+  "중계동": {
+   "x": 6,
+   "y": 8,
+   "t": 1.1,
+   "edu": 5,
+   "inf": 3,
+   "env": 4,
+   "fut": 3
+  },
+  "하계동": {
+   "x": 6,
+   "y": 7,
+   "t": 1.08,
+   "edu": 4,
+   "inf": 3,
+   "env": 3,
+   "fut": 3
+  },
+  "공릉동": {
+   "x": 7,
+   "y": 6,
+   "t": 1.08,
+   "edu": 3,
+   "inf": 3,
+   "env": 3,
+   "fut": 3
+  },
+  "월계동": {
+   "x": 4,
+   "y": 7,
+   "t": 1.1,
+   "edu": 2,
+   "inf": 2,
+   "env": 3,
+   "fut": 4
+  }
+ },
+ "complexes": [
+  {
+   "id": "11350-공릉동-도담파크",
+   "apt": "도담파크",
+   "dong": "공릉동",
+   "buildYear": 2005,
+   "units": 1680,
+   "totalFloors": 18,
+   "sizes": [
+    {
+     "m2": 49.9,
+     "py": 15.1,
+     "n": 7,
+     "median": 51000,
+     "min": 47400,
+     "max": 55000,
+     "floors": [
+      1,
+      4,
+      5,
+      7,
+      11,
+      13,
+      14
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 72.5,
+     "py": 21.9,
+     "n": 5,
+     "median": 81400,
+     "min": 75700,
+     "max": 87900,
+     "floors": [
+      1,
+      7,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 7,
+     "median": 119700,
+     "min": 111300,
+     "max": 129200,
+     "floors": [
+      1,
+      3,
+      6,
+      9,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10356305",
+   "kaptName": "도담파크",
+   "matchScore": 0.993,
+   "dongCnt": 5,
+   "parkingPerUnit": 0.54,
+   "subwayStation": "공릉역",
+   "subwayWalkMin": 16,
+   "heatName": "지역난방"
+  },
+  {
+   "id": "11350-상계동-새도힐스",
+   "apt": "새도힐스",
+   "dong": "상계동",
+   "buildYear": 2019,
+   "units": 1450,
+   "totalFloors": 18,
+   "sizes": [
+    {
+     "m2": 49.9,
+     "py": 15.1,
+     "n": 9,
+     "median": 49000,
+     "min": 45500,
+     "max": 52900,
+     "floors": [
+      1,
+      2,
+      3,
+      5,
+      8,
+      10,
+      11,
+      13,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 11,
+     "median": 63700,
+     "min": 59200,
+     "max": 68700,
+     "floors": [
+      1,
+      3,
+      4,
+      6,
+      7,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 7,
+     "median": 119600,
+     "min": 111200,
+     "max": 129100,
+     "floors": [
+      1,
+      3,
+      8,
+      9,
+      11,
+      12,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10356991",
+   "kaptName": "새도힐스",
+   "matchScore": 0.942,
+   "dongCnt": 20,
+   "parkingPerUnit": 0.72,
+   "subwayStation": "상계역",
+   "subwayWalkMin": 5,
+   "heatName": "중앙난방"
+  },
+  {
+   "id": "11350-상계동-솔안마을",
+   "apt": "솔안마을",
+   "dong": "상계동",
+   "buildYear": 1990,
+   "units": 880,
+   "totalFloors": 25,
+   "sizes": [
+    {
+     "m2": 49.9,
+     "py": 15.1,
+     "n": 10,
+     "median": 41800,
+     "min": 38800,
+     "max": 45100,
+     "floors": [
+      1,
+      2,
+      3,
+      7,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 72.5,
+     "py": 21.9,
+     "n": 8,
+     "median": 52800,
+     "min": 49100,
+     "max": 57000,
+     "floors": [
+      4,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 84.9,
+     "py": 25.7,
+     "n": 5,
+     "median": 67500,
+     "min": 62700,
+     "max": 72900,
+     "floors": [
+      2,
+      8,
+      9,
+      12,
+      13
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10357851",
+   "kaptName": "솔안마을",
+   "matchScore": 0.87,
+   "dongCnt": 6,
+   "parkingPerUnit": 1.14,
+   "subwayStation": "상계역",
+   "subwayWalkMin": 5,
+   "heatName": "지역난방"
+  },
+  {
+   "id": "11350-상계동-한빛마을3단지",
+   "apt": "한빛마을3단지",
+   "dong": "상계동",
+   "buildYear": 1988,
+   "units": 640,
+   "totalFloors": 15,
+   "sizes": [
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 11,
+     "median": 46900,
+     "min": 43600,
+     "max": 50600,
+     "floors": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      13,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 72.5,
+     "py": 21.9,
+     "n": 7,
+     "median": 62600,
+     "min": 58200,
+     "max": 67600,
+     "floors": [
+      2,
+      4,
+      8,
+      9,
+      10,
+      11,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 9,
+     "median": 95000,
+     "min": 88300,
+     "max": 102600,
+     "floors": [
+      1,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10354657",
+   "kaptName": "한빛마을3단지",
+   "matchScore": 0.948,
+   "dongCnt": 22,
+   "parkingPerUnit": 1.63,
+   "subwayStation": "상계역",
+   "subwayWalkMin": 16,
+   "heatName": "중앙난방"
+  },
+  {
+   "id": "11350-월계동-라온마을",
+   "apt": "라온마을",
+   "dong": "월계동",
+   "buildYear": 1997,
+   "units": 1450,
+   "totalFloors": 18,
+   "sizes": [
+    {
+     "m2": 49.9,
+     "py": 15.1,
+     "n": 3,
+     "median": 36700,
+     "min": 34100,
+     "max": 39600,
+     "floors": [
+      9,
+      10,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 7,
+     "median": 46800,
+     "min": 43500,
+     "max": 50500,
+     "floors": [
+      1,
+      3,
+      4,
+      6,
+      7,
+      10,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 84.9,
+     "py": 25.7,
+     "n": 6,
+     "median": 71800,
+     "min": 66700,
+     "max": 77500,
+     "floors": [
+      2,
+      3,
+      4,
+      6,
+      13,
+      14
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10351812",
+   "kaptName": "라온마을",
+   "matchScore": 0.997,
+   "dongCnt": 5,
+   "parkingPerUnit": 1.15,
+   "subwayStation": "광운대역",
+   "subwayWalkMin": 5,
+   "heatName": "개별난방"
+  },
+  {
+   "id": "11350-월계동-청류센트럴",
+   "apt": "청류센트럴",
+   "dong": "월계동",
+   "buildYear": 2021,
+   "units": 640,
+   "totalFloors": 25,
+   "sizes": [
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 8,
+     "median": 59000,
+     "min": 54800,
+     "max": 63700,
+     "floors": [
+      1,
+      2,
+      6,
+      7,
+      8,
+      9,
+      13,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 72.5,
+     "py": 21.9,
+     "n": 12,
+     "median": 69200,
+     "min": 64300,
+     "max": 74700,
+     "floors": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      14
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 10,
+     "median": 110100,
+     "min": 102300,
+     "max": 118900,
+     "floors": [
+      3,
+      4,
+      5,
+      7,
+      8,
+      9,
+      10,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10357867",
+   "kaptName": "청류센트럴",
+   "matchScore": 0.88,
+   "dongCnt": 7,
+   "parkingPerUnit": 1.16,
+   "subwayStation": "광운대역",
+   "subwayWalkMin": 16,
+   "heatName": "개별난방"
+  },
+  {
+   "id": "11350-중계동-가온마을1단지",
+   "apt": "가온마을1단지",
+   "dong": "중계동",
+   "buildYear": 1994,
+   "units": 320,
+   "totalFloors": 16,
+   "sizes": [
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 3,
+     "median": 50900,
+     "min": 47300,
+     "max": 54900,
+     "floors": [
+      5,
+      6,
+      14
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 9,
+     "median": 91900,
+     "min": 85400,
+     "max": 99200,
+     "floors": [
+      1,
+      2,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      14
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10352688",
+   "kaptName": "가온마을1단지",
+   "matchScore": 0.941,
+   "dongCnt": 10,
+   "parkingPerUnit": 0.92,
+   "subwayStation": "중계역",
+   "subwayWalkMin": 16,
+   "heatName": "지역난방",
+   "totalFloorsEstimated": true
+  },
+  {
+   "id": "11350-중계동-가온마을2단지",
+   "apt": "가온마을2단지",
+   "dong": "중계동",
+   "buildYear": 1996,
+   "units": 880,
+   "totalFloors": 15,
+   "sizes": [
+    {
+     "m2": 72.5,
+     "py": 21.9,
+     "n": 11,
+     "median": 55200,
+     "min": 51300,
+     "max": 59600,
+     "floors": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 84.9,
+     "py": 25.7,
+     "n": 4,
+     "median": 63200,
+     "min": 58700,
+     "max": 68200,
+     "floors": [
+      6,
+      8,
+      10,
+      11
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 13,
+     "median": 84300,
+     "min": 78300,
+     "max": 91000,
+     "floors": [
+      2,
+      3,
+      4,
+      5,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10351976",
+   "kaptName": "가온마을2단지",
+   "matchScore": 0.947,
+   "dongCnt": 19,
+   "parkingPerUnit": 1.3,
+   "subwayStation": "중계역",
+   "subwayWalkMin": 10,
+   "heatName": "개별난방"
+  },
+  {
+   "id": "11350-중계동-은하수타운",
+   "apt": "은하수타운",
+   "dong": "중계동",
+   "buildYear": 1993,
+   "units": 1450,
+   "totalFloors": 16,
+   "sizes": [
+    {
+     "m2": 84.9,
+     "py": 25.7,
+     "n": 13,
+     "median": 65200,
+     "min": 60600,
+     "max": 70400,
+     "floors": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 114.3,
+     "py": 34.6,
+     "n": 8,
+     "median": 84800,
+     "min": 78800,
+     "max": 91500,
+     "floors": [
+      4,
+      5,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10358628",
+   "kaptName": "은하수타운",
+   "matchScore": 0.942,
+   "dongCnt": 18,
+   "parkingPerUnit": 0.9,
+   "subwayStation": "중계역",
+   "subwayWalkMin": 5,
+   "heatName": "개별난방",
+   "totalFloorsEstimated": true
+  },
+  {
+   "id": "11350-하계동-윤슬타운",
+   "apt": "윤슬타운",
+   "dong": "하계동",
+   "buildYear": 1991,
+   "units": 1120,
+   "totalFloors": 15,
+   "sizes": [
+    {
+     "m2": 49.9,
+     "py": 15.1,
+     "n": 9,
+     "median": 40800,
+     "min": 37900,
+     "max": 44000,
+     "floors": [
+      2,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      13,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 59.8,
+     "py": 18.1,
+     "n": 13,
+     "median": 48100,
+     "min": 44700,
+     "max": 51900,
+     "floors": [
+      2,
+      3,
+      4,
+      5,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    },
+    {
+     "m2": 84.9,
+     "py": 25.7,
+     "n": 5,
+     "median": 70900,
+     "min": 65900,
+     "max": 76500,
+     "floors": [
+      8,
+      11,
+      12,
+      14,
+      15
+     ],
+     "lastYm": "202602"
+    }
+   ],
+   "kaptCode": "A10354999",
+   "kaptName": "윤슬타운",
+   "matchScore": 0.871,
+   "dongCnt": 20,
+   "parkingPerUnit": 1.07,
+   "subwayStation": "하계역",
+   "subwayWalkMin": 10,
+   "heatName": "중앙난방"
+  }
+ ]
+}
